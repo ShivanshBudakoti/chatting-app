@@ -9,7 +9,7 @@ function Login(props){
      const [login,setlogin]=useState(false)
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
-    const [User,setUser]=useState('');
+    // const [User,setUser]=useState('');
     const history = useNavigate();
 
     const [ConfirmPassword,setConfirmPassword]=useState('');
@@ -36,6 +36,10 @@ function handleSignup(e){
             // // Signed in 
             console.log(userCredential)
             // ...
+            dispatch({
+                type:actionTypes.SET_USER,
+                user:userCredential.user
+            })
           })
           .catch((error) => {
             var errorCode = error.code;
@@ -48,16 +52,20 @@ function handleSignup(e){
 const authListener=()=>{
     auth.onAuthStateChanged((user)=>{
         if(user){
-          setUser(user);
+             // ...
+             dispatch({
+                type:actionTypes.SET_USER,
+                user:user
+            })
           history('/');
         }
     })
 }
-useEffect(()=>{
-    authListener();
-    history('/');
+// useEffect(()=>{
+//     authListener();
+//     history('/');
 
-},[])
+// },[])
 function handleLogin (e){
     e.preventDefault();
     console.log(email);

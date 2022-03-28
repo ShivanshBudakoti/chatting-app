@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useStateValue } from ".";
 import firebase from "firebase/compat/app";
+import { actionTypes } from "./reducer";
 import db from "./firebase";
 const ChattingRoom=(props)=>{
     const [input,setinput]=useState("");
@@ -11,6 +12,7 @@ const ChattingRoom=(props)=>{
     const [roomName,setroomName]=useState("");
     const [{ photo}]=useStateValue();
     const [{user},dispatch]=useStateValue();
+    const [{Display}]=useStateValue()
     useEffect(()=>{
        if(id){
            db.collection('Room').doc(id).onSnapshot((res)=>{setroomName(res.data().name)});
@@ -20,6 +22,10 @@ const ChattingRoom=(props)=>{
     },[id])
     const sendmssg=(e)=>{
   e.preventDefault();
+  if(input.length===0){
+      alert("empty message cant be send");
+      return;
+  }
   console.log(input);
   db.collection('Room').doc(id).collection('mssg').add({
       message:input,
@@ -30,15 +36,21 @@ const ChattingRoom=(props)=>{
     }
     return(
         
-        <Wrapper>
+        <Wrapper className={!Display?"shown":"Shown"}>
             <Navbar>
-            <img src={photo}/>
+            {Display && <img src="https://cdn-icons-png.flaticon.com/128/60/60972.png" className="arrow" onClick={()=>{dispatch(
+                  {
+                    type:actionTypes.SET_DISPLAY,
+                    Display:false
+                  }
+              )}}/>}
+            <img  style={{height:50}  } src={photo}/>
             <div>
                 <h3 style={{margin:0}}>{roomName}</h3>
                 <p style={{margin:0}}>{new Date(
                     mssg[mssg.length-1]?.
                     timestamp?.toDate())
-                    .toUTCString()
+                    .toUTCString().substring(17,22)
                 }</p>
                 </div>
            <Menu><div></div>
@@ -49,7 +61,7 @@ const ChattingRoom=(props)=>{
                 {
                     mssg.map((message)=>( <Message className={message.name!==user.displayName ?"NotUser":"User"}>
                        {message.name!==user.displayName&& <span>{message.name} :</span>}
-                        <p >{message.message} <span>{new Date(message.timestamp?.toDate()).toUTCString()}</span> </p>
+                        <p >{message.message} <Time>{new Date(message.timestamp?.toDate()).toUTCString().substring(17,25)}</Time> </p>
                         
                         </Message>)
                     )
@@ -69,9 +81,11 @@ const ChattingRoom=(props)=>{
 }
 const Wrapper=styled.div`
 width:100%;
-background-color:blue;
-display:flex;
-flex-direction:column;
+// background-color:blue;
+
+// @media (max-width:680px){
+//     display:none;
+// }
 `;
 
 const Navbar=styled.div`
@@ -79,20 +93,23 @@ height:100px;
 display:flex;
 align-items:center;
 justify-content:end;
-background-color:rgb(219,219,219);
+background-color:whitesmoke;
+border-bottom:2px solid grey;
 cursor:pointer;
 img{
     margin-right:10px;
-    height:50px;
+    // height:50px;
     border-radius:50%;
 }
 min-width:100px;
 `;
 const ChatContainer=styled.div`
 flex:1;
-background-image:url("https://imgs.search.brave.com/PQ2lzfvMadqRpMHLTAGxyCHzRTIT5sS2vKnWHU2QAk0/rs:fit:750:1200:1/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDQ0MTA3/MjEuanBn");
-background-repeat:repeat;
-background-position:center;
+// background-image:url("https://imgs.search.brave.com/PQ2lzfvMadqRpMHLTAGxyCHzRTIT5sS2vKnWHU2QAk0/rs:fit:750:1200:1/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDQ0MTA3/MjEuanBn");
+// background-repeat:repeat;
+// background-position:center;
+background-color:whitesmoke;
+
 padding:30px;
 overflow:scroll;
 overflow-x:hidden;
@@ -103,17 +120,22 @@ background-color:white;
 height:62px;
 align-items:center;
 border-bottom:20px;
+width:100%;
 form{
-    flex:1;
+
     display:flex;
     align-items:center;
+    width:100%;
 input{
-    flex:1;
+    width:100%;
     font-size:20px;
     border-radius:30px;
     height:60px;
     margin-left:10px;
     padding:5px;
+    @media (max-width:680px) {
+        width:fit-content;
+    }
 }
 }
 padding:10px;
@@ -136,6 +158,8 @@ button{
 }
 }
 `;
+const Time=styled.span`
+`;
 const Menu=styled.div`
 display:flex;
 width:10px;
@@ -155,16 +179,26 @@ div{
 }`;
 const Message=styled.div`
 
+display:flex;
+flex-direction:column;
+font-size:1rem;
+// margin-left:0px;
+border:0px;
+align-items:start;
+// height:70px;
+width:fit-content;
+padding:10px;
 p{
-    height:10px;
-    width:fit-content;
-    display:flex;
-align-items:center;
+// position:absolute;
+// width:fit-content;
+margin:0px;
 }
 span{
     font-weight:580;
      font-size:10px;
      margin:10px;
+    
+
     }
 ;
 

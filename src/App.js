@@ -19,7 +19,7 @@ function App() {
       <Sidebar/>
         <Switch>
           <Route  path='/' element={ <ChattingRoom/>}/>
-          <Route  path='/room/:id' element={<ChattingRoom/>}/>
+          <Route  path='/room/:id' element={<ChattingRoom notshown={false}/>}/>
         </Switch>
      </>
      )}
