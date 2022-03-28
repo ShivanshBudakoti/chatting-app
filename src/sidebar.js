@@ -7,7 +7,7 @@ import { useStateValue } from ".";
 const Sidebar=(props)=>{
     const history=useNavigate();
     const [room,setroom]=useState([]);
-    const [{photo,user,Display}] = useStateValue();
+    const [{photo,user,Display,Username}] = useStateValue();
     const [Search,setSearch]=useState('');
     useEffect(()=>{
         const unsubscribe = db.collection('Room')
@@ -38,8 +38,9 @@ const Sidebar=(props)=>{
     return(
         <Container className={Display&&"Notshown"}>
             <Navbar>
-            <Userimg src={photo}/> 
-            <span>{user.displayName}</span>
+            <Userimg src={user.displayName?photo:"https://cdn-icons.flaticon.com/png/512/552/premium/552848.png?token=exp=1647263428~hmac=b7bdfb7eb4b05470f3867d199a98c115"}/> 
+            <span>{user.displayName?user.displayName:Username}</span>
+            {console.log(user.displayName,Username)}
            <Menu>
                <div></div>
                <div></div>

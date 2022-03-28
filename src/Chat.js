@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useStateValue } from ".";
 import firebase from "firebase/compat/app";
 import { actionTypes } from "./reducer";
-import db from "./firebase";
+import db, { auth } from "./firebase";
 const ChattingRoom=(props)=>{
     const [input,setinput]=useState("");
     const {id}=useParams();
@@ -34,6 +34,15 @@ const ChattingRoom=(props)=>{
   })
   setinput('');
     }
+    const handlesignout=()=>{
+        auth.signOut().then(()=>{
+            dispatch({
+                type:actionTypes.SET_USER_OUT,
+                user:null
+            })
+        console.log("signout");
+        })
+    }
     return(
         
         <Wrapper className={!Display?"shown":"Shown"}>
@@ -44,7 +53,7 @@ const ChattingRoom=(props)=>{
                     Display:false
                   }
               )}}/>}
-            <img  style={{height:50}  } src={photo}/>
+            
             <div>
                 <h3 style={{margin:0}}>{roomName}</h3>
                 <p style={{margin:0}}>{new Date(
@@ -53,9 +62,10 @@ const ChattingRoom=(props)=>{
                     .toUTCString().substring(17,22)
                 }</p>
                 </div>
-           <Menu><div></div>
+           <Menu ><div></div>
                <div></div>
-               <div></div></Menu>
+               <div></div>
+               <span onClick={()=>{handlesignout()}}>Sign Out</span></Menu>
             </Navbar>
             <ChatContainer>  
                 {
@@ -87,7 +97,21 @@ width:100%;
 //     display:none;
 // }
 `;
-
+const Menu=styled.div`
+display:flex;
+width:10px;
+flex-direction:column;
+justify-content:center;
+padding-right:20px;
+margin-left:10px;
+div{
+    border:1px solid black;
+    border-radius:100%;
+    padding:3px;
+    margin:0;
+    margin-bottom:3px;
+  
+}`;
 const Navbar=styled.div`
 height:100px;
 display:flex;
@@ -102,6 +126,30 @@ img{
     border-radius:50%;
 }
 min-width:100px;
+${Menu}{
+    &: hover{
+     span{
+         width:fit-content;
+         color:white;
+        opacity:1;
+        transition-duration:1s;
+     }
+    }
+}
+span{
+    position:absolute;
+    top:100px;
+    right:0px;
+    width:100px;
+    background:rgb(19,19,19);
+    border:1px solid rgba(151,151,151,0.34);
+    box-shadow:rgb(0 0 0 / 50%) 0px 0px 18px 0px;
+    border-radius:5px;
+    padding:10px;
+    font-size:14px;
+    letter-spacing:3px;
+    opacity:0;
+}
 `;
 const ChatContainer=styled.div`
 flex:1;
@@ -160,23 +208,7 @@ button{
 `;
 const Time=styled.span`
 `;
-const Menu=styled.div`
-display:flex;
-width:10px;
-flex-direction:column;
-justify-content:center;
-padding-right:20px;
-margin-left:10px;
-div{
-    border:1px solid black;
-    border-radius:100%;
-    padding:3px;
-    margin:0;
-    margin-bottom:3px;
-    &:hover{
 
-    }
-}`;
 const Message=styled.div`
 
 display:flex;

@@ -9,6 +9,8 @@ function Login(props){
      const [login,setlogin]=useState(false)
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
+    const [username,setUsername]=useState('');
+
     // const [User,setUser]=useState('');
     const history = useNavigate();
 
@@ -40,6 +42,10 @@ function handleSignup(e){
                 type:actionTypes.SET_USER,
                 user:userCredential.user
             })
+            dispatch({
+                type:actionTypes.SET_USERNAME,
+                Username:username
+            })  
           })
           .catch((error) => {
             var errorCode = error.code;
@@ -47,6 +53,7 @@ function handleSignup(e){
             console.log(errorCode,errorMessage);
             // ..
           })
+      
           history('/');
 }
 const authListener=()=>{
@@ -57,15 +64,19 @@ const authListener=()=>{
                 type:actionTypes.SET_USER,
                 user:user
             })
-          history('/');
+            // var displayName = user.displayName;
+            // var email = user.email;
+         // var displayName = user.displayName;
+            // var email = user.email;
+            // var emailVerified = user.emailVerified;
         }
     })
 }
-// useEffect(()=>{
-//     authListener();
-//     history('/');
+useEffect(()=>{
+    authListener();
+    history('/');
 
-// },[])
+},[])
 function handleLogin (e){
     e.preventDefault();
     console.log(email);
@@ -137,6 +148,8 @@ auth.signInWithEmailAndPassword(email, password)
             :<>
             <h1>SIGN UP</h1>
             <form onSubmit={handleSignup}>
+              <span>UserName</span>  
+              <input type="text" onChange={(e)=>setUsername(e.target.value)}></input>
              <span>Email Id:</span>
              <input type="email" onChange={(e)=>setEmail(e.target.value)}></input>
              <span>Password:</span>
